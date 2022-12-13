@@ -1,0 +1,13 @@
+{
+    "moduleFileExtensions": ["js", "json", "ts"],
+    "rootDir": ".",
+    "testTimeout": 30000,
+    "testEnvironment": "node",
+    "testMatch": ["<rootDir>/test/**/*.e2e-spec.{ts,js}"],
+    "transform": {
+        "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "coverageDirectory": "./coverage",
+    "coverageReporters": ["html", "text", "text-summary", "cobertura"],
+    "coveragePathIgnorePatterns": [".entity.ts$", ".spec.ts$", ".dto.ts$"]
+}
