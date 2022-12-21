@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -10,12 +11,13 @@ import { ClassTransformInterceptor } from './shared/interceptors/class-transform
 import { ResponseTransformInterceptor } from './shared/interceptors/response-transform.interceptor';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { ProfileModule } from './profile/profile.module';
 import { BcryptService } from './shared/util/bcrypt.service';
 import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-
+import { DepartmentModule } from './department/department.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
     }),
     AuthModule,
     UsersModule,
+    ProfileModule,
+    DepartmentModule,
   ],
   controllers: [AppController],
   providers: [
@@ -42,9 +46,6 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
   ],
 })
 export class AppModule implements OnApplicationBootstrap {
-  constructor(
-
-  ) {}
-  async onApplicationBootstrap() {
-  }
+  constructor() {}
+  async onApplicationBootstrap() {}
 }

@@ -20,7 +20,7 @@ import { Code } from 'src/users/entities/code.entity';
 @Global()
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User,Code]),
+    TypeOrmModule.forFeature([User, Code]),
     NotificationsModule,
     forwardRef(() => UsersModule),
     PassportModule,

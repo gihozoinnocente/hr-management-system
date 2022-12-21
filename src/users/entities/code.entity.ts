@@ -1,9 +1,15 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from "typeorm";
-import { User } from "./user.entity";
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
+import { User } from './user.entity';
 
-@Entity({name:"code"})
-export class Code  {
+@Entity({ name: 'code' })
+export class Code {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
@@ -13,9 +19,9 @@ export class Code  {
   code: string;
   @ApiProperty()
   @Column({ nullable: false })
-  expiryDate:Date;
+  expiryDate: Date;
 
   @OneToOne(() => User)
   @JoinColumn()
-  user: User
+  user: User;
 }

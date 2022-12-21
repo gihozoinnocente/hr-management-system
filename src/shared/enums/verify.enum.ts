@@ -1,5 +1,4 @@
 export enum VerifyBy {
-    EMAIL= 'email',
-    SMS = 'sms'
-   
+  EMAIL = 'email',
+  SMS = 'sms',
 }

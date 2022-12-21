@@ -27,14 +27,6 @@ export class CreateUserDto {
   password: string;
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  @Matches(/^(?=.*[\d])(?=.*[a-z])(?=.*[A-Z]).{8,16}$/, {
-    message: 'Password is weak',
-  })
-  confirmPassword: string;
-
-  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   first_name: string;
@@ -44,18 +36,14 @@ export class CreateUserDto {
   @IsString()
   last_name: string;
 
-  
-
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   @MinLength(13)
   phone_number: string;
-  
+
   @ApiProperty()
   @IsEnum(VerifyBy)
   @IsNotEmpty()
   verifyBy: VerifyBy;
-
-  
 }

@@ -9,6 +9,7 @@ import {
   Query,
   Res,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -28,8 +29,12 @@ import { User } from '../users/entities/user.entity';
 import { getGenericResponseSchema } from '../shared/util/swagger.util';
 import { AccountVerificationDto } from './dto/account-verification.dto';
 import { RequestVerificationCode } from './dto/request-verification-code.dto';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { LoginDto } from './dto/login.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { SUCCESS_LOGIN } from 'src/shared/constants/auth.constants';
+import { Patch } from '@nestjs/common/decorators';
+import { AuthUser, GetUser } from './decorators/get-user.decorator';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -46,27 +51,29 @@ export class AuthController {
   @ApiBadRequestResponse({ description: 'Bad request' })
   @HttpCode(HttpStatus.CREATED)
   @Post('/register')
-  async registerCandidate(
+  async registerUser(
     @Body() createUserDto: CreateUserDto,
   ): Promise<GenericResponse<void>> {
-    const result =await this.authService.registrUser(createUserDto)
+    const result = await this.authService.registerUser(createUserDto);
     return {
-      message: "User registered successfully",
+      message: 'User registered successfully',
       results: result,
     };
   }
-/*  @ApiCreatedResponse({
+  @ApiCreatedResponse({
     description: 'Verification code sent',
     ...getGenericResponseSchema(),
   })
   @ApiNotFoundResponse({ description: 'No email or phone found' })
   @ApiBadRequestResponse({ description: 'Bad request' })
   @HttpCode(HttpStatus.CREATED)
-  @Post('/request-verification-code')
+  @Post('/requestVerCode')
   async requestVerification(
     @Body() requestVerificationCodeDto: RequestVerificationCode,
   ): Promise<GenericResponse<string>> {
-    await this.authService.requestVerification(requestVerificationCodeDto.emailOrPhone);
+    await this.authService.requestVerification(
+      requestVerificationCodeDto.emailOrPhone,
+    );
     return { message: 'Verification code sent', results: '' };
   }
   @ApiCreatedResponse({
@@ -78,26 +85,73 @@ export class AuthController {
   @ApiQuery({ name: 'code' })
   @HttpCode(HttpStatus.OK)
   @Get('/verify')
-  async verification(@Query() verCode:AccountVerificationDto
-    ): Promise<GenericResponse<string>>{
-    const results = await this.authService.verification(verCode.verificationCode);
-    
-    return {message:'Account verified successfully',results:''};
+  async verification(
+    @Query() verCode: AccountVerificationDto,
+  ): Promise<GenericResponse<string>> {
+    const results = await this.authService.verification(
+      verCode.verificationCode,
+    );
+
+    return { message: 'Account verified successfully', results: '' };
   }
+  @ApiCreatedResponse({
+    description: 'login successfully',
+    ...getGenericResponseSchema(User),
+  })
+  @ApiExtraModels(User)
+  @ApiConflictResponse({ description: 'User logged in successfully' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
   @HttpCode(HttpStatus.OK)
-  @Post('/test')
-  test():string{
-    return "test";
-  }*/
-
-
-  //LOGIN
-  @Post('login')
-  @HttpCode(HttpStatus.OK)
-  login(@Body() user: User): Observable<{ token: string }> {
-    return this.authService
-      .login(user)
-      .pipe(map((jwt: string) => ({ token: jwt })));
+  @Post('/Adminlogin')
+  async login(@Body() loginDto: LoginDto): Promise<GenericResponse<any>> {
+    const result = await this.authService.adminLogin(
+      loginDto.password,
+      loginDto.email,
+    );
+    return {
+      message: SUCCESS_LOGIN,
+      results: { refreshToken: result.refreshToken, user: result.user },
+    };
   }
-
+  @ApiCreatedResponse({
+    description: 'login successfully',
+    ...getGenericResponseSchema(User),
+  })
+  @ApiExtraModels(User)
+  @ApiConflictResponse({ description: 'User logged in successfully' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @HttpCode(HttpStatus.OK)
+  @Post('/userlogin')
+  async userlogin(@Body() loginDto: LoginDto): Promise<GenericResponse<any>> {
+    const result = await this.authService.standardUserLogin(
+      loginDto.password,
+      loginDto.email,
+    );
+    return {
+      message: SUCCESS_LOGIN,
+      results: { refreshToken: result.refreshToken, user: result.user },
+    };
+  }
+  @ApiCreatedResponse({
+    description: 'password changed successfully',
+    ...getGenericResponseSchema(User),
+  })
+  @ApiExtraModels(User)
+  @ApiConflictResponse({ description: 'password changed successfully' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @HttpCode(HttpStatus.OK)
+  @Patch('/changePassword')
+  async changePassword(
+    @Req() req,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ): Promise<GenericResponse<any>> {
+    const result = await this.authService.changePassword(
+      req.User,
+      changePasswordDto,
+    );
+    return {
+      message: 'password changed successfully',
+      results: { user: result.user },
+    };
+  }
 }

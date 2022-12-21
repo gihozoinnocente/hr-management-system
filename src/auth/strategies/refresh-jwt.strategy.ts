@@ -11,7 +11,7 @@ import { User } from '../../users/entities/user.entity';
 
 @Injectable()
 export class JwtRefreshTokenStrategy extends PassportStrategy(
-  Strategy,
+  Strategy, 
   'jwt-refresh-token',
 ) {
   constructor(

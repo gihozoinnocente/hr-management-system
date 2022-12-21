@@ -7,10 +7,7 @@ import { AuthModule } from '../auth/auth.module';
 import { BcryptService } from '../shared/util/bcrypt.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([User]),
-    forwardRef(() => AuthModule),
-  ],
+  imports: [TypeOrmModule.forFeature([User]), forwardRef(() => AuthModule)],
   controllers: [UsersController],
   providers: [UsersService, BcryptService],
   exports: [UsersService],
